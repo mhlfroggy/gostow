@@ -4,41 +4,40 @@
 package main
 
 import (
-    "os"
+	"context"
 	"fmt"
+	"github.com/urfave/cli/v3"
 	"log"
-    "context"
-	"regexp"
+	"os"
 	"path/filepath"
-    "github.com/urfave/cli/v3"
+	"regexp"
 )
 
 func main() {
 	cli.VersionFlag = &cli.BoolFlag{
-        Name:    "version",
-        Aliases: []string{"V"},
-        Usage:   "Print gostow version",
-    } 
+		Name:    "version",
+		Aliases: []string{"V"},
+		Usage:   "Print gostow version",
+	}
 
 	cmd := &cli.Command{
-        Name:  "gostow",
-        Usage: "An improved dotfile management utility",
-		Version: "v0.0.1-alpha",
+		Name:      "gostow",
+		Usage:     "An improved dotfile management utility",
+		Version:   "v0.0.1-alpha",
 		ArgsUsage: "DIR",
 		Flags: []cli.Flag{
-            &cli.BoolFlag{Name:   "dry-run",  Value: false, Usage: "Do a dry run, showing what operations would be performed"},
-			&cli.StringFlag{Name: "dir",      Aliases: []string{"d"},  Usage: "Set the source directory to `DIR` (default is current directory)"},
-			&cli.StringFlag{Name: "target",	  Aliases: []string{"t"},  Usage: "Set the target directory to `DIR` (default is ~/.config)"},
-			&cli.BoolFlag{Name:   "verbose",  Aliases: []string{"v"},  Value: false, Usage: "Show verbose output"},
-			&cli.BoolFlag{Name:   "remove",   Aliases: []string{"rm"}, Value: false, Usage: "Remove dotfiles from configuration directory instead of linking them"},
-			&cli.BoolFlag{Name:   "replace",  Aliases: []string{"r"},  Value: false, Usage: "Remove all dotfiles from configuration, then relinks them"},
-			&cli.StringFlag{Name: "ignore",   Usage: "Ignore all files matching `REGEX`"},
+			&cli.BoolFlag{Name: "dry-run", Value: false, Usage: "Do a dry run, showing what operations would be performed"},
+			&cli.StringFlag{Name: "dir", Aliases: []string{"d"}, Usage: "Set the source directory to `DIR` (default is current directory)"},
+			&cli.StringFlag{Name: "target", Aliases: []string{"t"}, Usage: "Set the target directory to `DIR` (default is ~/.config)"},
+			&cli.BoolFlag{Name: "verbose", Aliases: []string{"v"}, Value: false, Usage: "Show verbose output"},
+			&cli.BoolFlag{Name: "remove", Aliases: []string{"rm"}, Value: false, Usage: "Remove dotfiles from configuration directory instead of linking them"},
+			&cli.BoolFlag{Name: "replace", Aliases: []string{"r"}, Value: false, Usage: "Remove all dotfiles from configuration, then relinks them"},
+			&cli.StringFlag{Name: "ignore", Usage: "Ignore all files matching `REGEX`"},
 			&cli.StringFlag{Name: "override", Usage: "Force linking of files matching `REGEX` even if the config already exists"},
 			// &cli.BoolFlag{Name:   "migrate",  Value: false, Usage: "Generate a dotfiles directory and migrate all your dotfiles"},
-        },
+		},
 
-
-        Action: func(ctx context.Context, cmd *cli.Command) error {
+		Action: func(ctx context.Context, cmd *cli.Command) error {
 			var DIR_PATH string
 			var CONFIG_PATH string
 			var err error
@@ -53,15 +52,15 @@ func main() {
 			} else {
 				currentDir, err := os.Getwd()
 				if err != nil {
-        			log.Fatal( err )
-    			} 
+					log.Fatal(err)
+				}
 				DIR_PATH = filepath.Join(currentDir, configDirectory)
 			}
 
 			// Logic handling for --target/-t flag
 			// If this flag is present, the target directory where the new
-			// config folder will be created is set to whatever the user 
-			// provides as an argument following the flag. Default value is 
+			// config folder will be created is set to whatever the user
+			// provides as an argument following the flag. Default value is
 			///home/user/.config
 			if cmd.IsSet("target") {
 				CONFIG_PATH = cmd.String("target")
@@ -73,7 +72,7 @@ func main() {
 				CONFIG_PATH = filepath.Join(homeDir, ".config")
 			}
 
-			// Generate the new directory in the config path 
+			// Generate the new directory in the config path
 			configDirectoryPath := filepath.Join(CONFIG_PATH, configDirectory)
 			os.MkdirAll(configDirectoryPath, 0755)
 
@@ -110,7 +109,7 @@ func main() {
 				if cmd.IsSet("replace") && fileNotExist {
 					if _, err := os.Lstat(linkedFile); err == nil {
 						fmt.Printf("Unlinking %s\n", linkedFile)
-  						os.Remove(linkedFile)
+						os.Remove(linkedFile)
 					}
 				} else if !fileNotExist {
 					log.Fatal("ERROR: File already exists. Remove before continuing")
@@ -119,7 +118,7 @@ func main() {
 				// Unlink file if --remove/-r flag is present
 				if cmd.Bool("remove") == true {
 					if _, err := os.Lstat(linkedFile); err == nil {
-  						os.Remove(linkedFile)
+						os.Remove(linkedFile)
 					}
 					continue
 				}
@@ -136,13 +135,13 @@ func main() {
 				}
 
 				// Perform symlinking
-				os.Symlink(sourceFile, linkedFile) 
+				os.Symlink(sourceFile, linkedFile)
 			}
 			return nil
-        },
-    }
+		},
+	}
 
-    if err := cmd.Run(context.Background(), os.Args); err != nil {
-        log.Fatal(err)
-    }
+	if err := cmd.Run(context.Background(), os.Args); err != nil {
+		log.Fatal(err)
+	}
 }
