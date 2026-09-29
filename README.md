@@ -9,13 +9,22 @@ philiosphy of "doing one thing and doing it well".
 Licensed under the MIT license.
 
 ### CHANGELOG
-See [[changelog.md]] for version release history.
+See changelog.md for version release history.
 
 ### Installation
-Currently, only Arch Linux and macOS are supported
+From source:
+```aiignore bash
+git clone https://github.com/mattheenan/gostow.git
+cd gostow
+go build
+go install
+```
 
-Arch Linux: `paru -S gostow-bin` or `yay -Sy gostow-bin`
-macOS: `brew install gostow`
+Additionally, packages exist for the main Linux distributions as well as MacOS
+- Debian/Ubuntu: `sudo apt install gostow`
+- Fedora/RHEL: `sudo dnf install gostow`
+- Arch Linux: `paru -S gostow`
+- Homebrew: `brew install gostow`
 
 ### Documentation
 
@@ -29,8 +38,3 @@ macOS: `brew install gostow`
   files already exist in the target directory unless the `--override` flag is
   passed in
 - Better output to show what is going on
-
-### LLM Disclosure
-The source code for this project was not written with the use of LLMs, but
-packaging scripts such as for AUR, Brew, etc. were written with the assistance
-of Kimi K2.7 code.

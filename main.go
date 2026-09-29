@@ -1,16 +1,18 @@
 // TODO: Ensure flags which are mutually exclusive are set as such
-// TODO: Enable support for single-file configurations
+// TODO: Enable support for single-file configurations (in non .config directories)
+// TODO: Perform more testing on security measures
 
 package main
 
 import (
 	"context"
 	"fmt"
-	"github.com/urfave/cli/v3"
 	"log"
 	"os"
 	"path/filepath"
 	"regexp"
+
+	"github.com/urfave/cli/v3"
 )
 
 func main() {
@@ -34,7 +36,6 @@ func main() {
 			&cli.BoolFlag{Name: "replace", Aliases: []string{"r"}, Value: false, Usage: "Remove all dotfiles from configuration, then relinks them"},
 			&cli.StringFlag{Name: "ignore", Usage: "Ignore all files matching `REGEX`"},
 			&cli.StringFlag{Name: "override", Usage: "Force linking of files matching `REGEX` even if the config already exists"},
-			// &cli.BoolFlag{Name:   "migrate",  Value: false, Usage: "Generate a dotfiles directory and migrate all your dotfiles"},
 		},
 
 		Action: func(ctx context.Context, cmd *cli.Command) error {
